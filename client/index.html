@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Back End Assessment</title>
+  </head>
+  <body class="container" id="container">
+    <button id="complimentButton">Get a compliment</button>
+    <button id="getAllBtn">Get all compliments</button>
+    <button id="hkButton">Get a fortune</button>
+    <input id="newCompliment" placeholder="Add new compliment">
+    <button id="addComplimentBtn">Add compliment</button>
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      document.getElementById("complimentButton").onclick = function () {
+        axios.get("http://localhost:4000/api/compliment/")
+            .then(function (response) {
+              const data = response.data.text;
+              alert(data);
+            });
+      };
+    </script>
+    <script>
+      document.getElementById("getAllBtn").onclick = function () {
+        axios.get("http://localhost:4000/api/compliments/")
+            .then(function (res) {
+              let compliments = res.data
+              deleteComp = (value) => {
+                axios.delete(`http://localhost:4000/api/compliment/${+value}`).then(
+                  document.getElementById(value).remove()
+
+                )
+              }
+              for(let i = 0; i < compliments.length; i++){
+                let complimentList = document.createElement('div')
+                  complimentList.classList.add('compliment')
+                  complimentList.setAttribute('id', compliments[i].id )
+
+                  complimentList.innerHTML = `
+                  <p class="compliment">${compliments[i].text}</p>
+                      <button onClick=deleteComp(${compliments[i].id})>x</button>
+                  </div>
+                  `
+                  document.getElementById("container").appendChild(complimentList)
+              }
+
+            });
+      };
+    </script>
+    <script>
+      document.getElementById("hkButton").onclick = function () {
+        axios.get("http://localhost:4000/api/fortune/")
+            .then(function (response) {
+              const data = response.data;
+              alert(data);
+            });
+      };
+    </script>
+    <script>
+      document.getElementById("addComplimentBtn").onclick = function () {
+        let text = document.getElementById("newCompliment").value
+
+        axios.post("http://localhost:4000/api/compliment/", {text})
+            .then(function (response) {
+              const data = response.data.text;
+              alert(data);
+            });
+      };
+    </script>
+  </body>
+</html>
